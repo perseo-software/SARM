@@ -25,18 +25,14 @@ void loop(){
     temperatura = bmp.readTemperature();
     altitud = bmp.readAltitude (1015); // Ajustar con el valor local
 
-    //Serial.print(F("Presion: "));
-    Serial.println(presion);
-    //Serial.print(" hPa");
-    //Serial.print("\t");
-    //Serial.print(("Temp: "));
-    //Serial.print(temperatura);
-    //Serial.print(" *C");
-    //Serial.print("\t");
-    //Serial.print("Altitud (aprox): ");
-    //Serial.print(altitud); 
-    //Serial.println(" m");
-    delay(1000);
+    Serial.print(F("Presion: "));
+    Serial.print(presion);
+    Serial.print(" hPa");
+    Serial.print("\t");
+    Serial.print(("Temp: "));
+    Serial.print(temperatura);
+    Serial.println(" *C");
+    delay(100);
     
     int val = analogRead(pinPotenciometro);
     analogWrite(pinEnableMotor, val/4);
