@@ -1,8 +1,11 @@
 #include "Adafruit_BMP280.h"
+//#include <Wire.h>   //Ya incluida en Adafruit_BMP280.h
+#include <LiquidCrystal_I2C.h>
 
 #define pinPotenciometro A0
 #define pinEnableMotor 5
 
+LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Adafruit_BMP280 bmp; // I2C
 
 float presion; // Almacena la presion atmosferica (Pa)
@@ -10,13 +13,27 @@ float temperatura; // Almacena la temperatura (oC)
 int altitud; // Almacena la altitud (m) (se puede usar variable float)
 
 void setup(){
+    lcd.begin(16,2);
+    lcd.backlight();
+    lcd.setCursor(2,0);
+    lcd.print("*** SARM ****");
+    lcd.setCursor(0,1); 
+    lcd.print("-booting-");
+
     Serial.begin(9600);
     if (!bmp.begin()) {
         Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
         while (1);
     }
+    
     pinMode(pinEnableMotor, OUTPUT);
     analogWrite(pinEnableMotor, 0);
+
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Pres[hPa]:");
+    lcd.setCursor(0,1);
+    lcd.print("Vel[RPM]:");
 }
 
 void loop(){
@@ -32,9 +49,13 @@ void loop(){
     Serial.print(("Temp: "));
     Serial.print(temperatura);
     Serial.println(" *C");
-    delay(100);
+    delay(500);
     
     int val = analogRead(pinPotenciometro);
     analogWrite(pinEnableMotor, val/4);
-    //Serial.println(val);    
-}   
+
+    lcd.setCursor(10,0);
+    lcd.print(presion);
+    lcd.setCursor(10,1);
+    lcd.print(val/4);
+}
