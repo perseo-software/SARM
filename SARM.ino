@@ -12,6 +12,10 @@ float presion; // Almacena la presion atmosferica (Pa)
 float temperatura; // Almacena la temperatura (oC)
 int altitud; // Almacena la altitud (m) (se puede usar variable float)
 
+unsigned long now;
+unsigned long last_lcd = 0;
+#define refresh_lcd_rate 500    // tasa de refresco en ms
+
 void setup(){
     lcd.begin(16,2);
     lcd.backlight();
@@ -27,13 +31,7 @@ void setup(){
     }
     
     pinMode(pinEnableMotor, OUTPUT);
-    analogWrite(pinEnableMotor, 0);
-
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print("Pres[hPa]:");
-    lcd.setCursor(0,1);
-    lcd.print("Vel[RPM]:");
+    analogWrite(pinEnableMotor, 0);    
 }
 
 void loop(){
@@ -49,13 +47,25 @@ void loop(){
     Serial.print(("Temp: "));
     Serial.print(temperatura);
     Serial.println(" *C");
-    delay(500);
     
     int val = analogRead(pinPotenciometro);
     analogWrite(pinEnableMotor, val/4);
 
-    lcd.setCursor(10,0);
-    lcd.print(presion);
-    lcd.setCursor(10,1);
-    lcd.print(val/4);
+    //LCD update
+    now = millis();
+    if (now - last_lcd >= refresh_lcd_rate){
+        last_lcd = now;
+
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print("Pres[hPa]:");
+        lcd.setCursor(0,1);
+        lcd.print("Vel[RPM]:");
+
+        lcd.setCursor(10,0);
+        lcd.print(presion);
+        lcd.setCursor(10,1);
+        lcd.print(val/4);
+    }
+    
 }
