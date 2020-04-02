@@ -40,14 +40,14 @@ void loop(){
     Serial.print(',');
     Serial.println(pizzometro2_state);
 
-    //Serial.print(F("Presion: "));
-    //Serial.print(presion);
-    //Serial.print(" hPa");
-    //Serial.print("\t");
-    //Serial.print(("Temp: "));
-    //Serial.print(temperatura);
-    //Serial.println(" *C");
-    //delay(100);
+    Serial.print(F("Presion: "));
+    Serial.print(presion);
+    Serial.print(" hPa");
+    Serial.print("\t");
+    Serial.print(("Temp: "));
+    Serial.print(temperatura);
+    Serial.println(" *C");
+    delay(100);
     
     int val = analogRead(pinPotenciometro);
     analogWrite(pinEnableMotor, val/4);
