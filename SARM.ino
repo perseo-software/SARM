@@ -4,6 +4,8 @@
 
 #define pinPotenciometro A0
 #define pinEnableMotor 5
+#define pinPizzometro1 9
+#define pinPizzometro2 10
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Adafruit_BMP280 bmp; // I2C
@@ -15,6 +17,10 @@ int altitud; // Almacena la altitud (m) (se puede usar variable float)
 unsigned long now;
 unsigned long last_lcd = 0;
 #define refresh_lcd_rate 500    // tasa de refresco en ms
+
+bool pizzometro1_state;
+bool pizzometro2_state;
+
 
 void setup(){
     lcd.begin(16,2);
@@ -31,7 +37,11 @@ void setup(){
     }
     
     pinMode(pinEnableMotor, OUTPUT);
-    analogWrite(pinEnableMotor, 0);    
+    analogWrite(pinEnableMotor, 0);
+
+    pinMode(pinPizzometro1, INPUT);
+    pinMode(pinPizzometro2,INPUT);
+
 }
 
 void loop(){
@@ -39,6 +49,13 @@ void loop(){
     presion = bmp.readPressure()/100;
     temperatura = bmp.readTemperature();
     altitud = bmp.readAltitude (1015); // Ajustar con el valor local
+
+    pizzometro1_state = digitalRead(pinPizzometro1);
+    pizzometro2_state = digitalRead(pinPizzometro2);
+
+    Serial.print(pizzometro1_state);
+    Serial.print(',');
+    Serial.println(pizzometro2_state);
 
     Serial.print(F("Presion: "));
     Serial.print(presion);
