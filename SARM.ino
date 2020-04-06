@@ -2,10 +2,10 @@
 //#include <Wire.h>   //Ya incluida en Adafruit_BMP280.h
 #include <LiquidCrystal_I2C.h>
 
-#define pinPotenciometro A0
-#define pinEnableMotor 5
-#define pinPizzometro1 9
-#define pinPizzometro2 10
+#define pinPotenciometro A1
+#define pinEnableMotor 3
+#define pinPizzometro1 5
+#define pinPizzometro2 2
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Adafruit_BMP280 bmp; // I2C
@@ -30,11 +30,11 @@ void setup(){
     lcd.setCursor(0,1); 
     lcd.print("-booting-");
 
-    Serial.begin(9600);
-    if (!bmp.begin()) {
-        Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
-        while (1);
-    }
+    Serial.begin(115200);
+//    if (!bmp.begin()) {
+//        Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
+//        while (1);
+//    }
     
     pinMode(pinEnableMotor, OUTPUT);
     analogWrite(pinEnableMotor, 0);
@@ -46,24 +46,26 @@ void setup(){
 
 void loop(){
     // Lee valores del sensor:
-    presion = bmp.readPressure()/100;
+    presion = bmp.readPressure()/1000;
     temperatura = bmp.readTemperature();
-    altitud = bmp.readAltitude (1015); // Ajustar con el valor local
+    //altitud = bmp.readAltitude (1015); // Ajustar con el valor local
 
     pizzometro1_state = digitalRead(pinPizzometro1);
     pizzometro2_state = digitalRead(pinPizzometro2);
 
-    Serial.print(pizzometro1_state);
-    Serial.print(',');
-    Serial.println(pizzometro2_state);
+    //Serial.print(pizzometro1_state);
+    //Serial.print(',');
+    //Serial.println(pizzometro2_state);
 
-    Serial.print(F("Presion: "));
-    Serial.print(presion);
-    Serial.print(" hPa");
-    Serial.print("\t");
-    Serial.print(("Temp: "));
-    Serial.print(temperatura);
-    Serial.println(" *C");
+    //Serial.print(F("Presion: "));
+    Serial.print(millis()/1000);
+    Serial.print(",");
+    Serial.println(presion);
+    //Serial.print(" kPa");
+    //Serial.print("\t");
+    //Serial.print(("Temp: "));
+    //Serial.print(temperatura);
+    //Serial.println(" *C");
     
     int val = analogRead(pinPotenciometro);
     analogWrite(pinEnableMotor, val/4);
@@ -75,7 +77,7 @@ void loop(){
 
         lcd.clear();
         lcd.setCursor(0,0);
-        lcd.print("Pres[hPa]:");
+        lcd.print("Pres[kPa]:");
         lcd.setCursor(0,1);
         lcd.print("Vel[RPM]:");
 
