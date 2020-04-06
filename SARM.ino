@@ -58,7 +58,7 @@ void loop(){
     //Serial.println(pizzometro2_state);
 
     //Serial.print(F("Presion: "));
-    Serial.print(millis()/1000);
+    Serial.print(millis()/1000.0,3);
     Serial.print(",");
     Serial.println(presion);
     //Serial.print(" kPa");
