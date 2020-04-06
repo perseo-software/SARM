@@ -31,10 +31,10 @@ void setup(){
     lcd.print("-booting-");
 
     Serial.begin(115200);
-//    if (!bmp.begin()) {
-//        Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
-//        while (1);
-//    }
+    if (!bmp.begin()) {
+        Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
+        while (1);
+    }
     
     pinMode(pinEnableMotor, OUTPUT);
     analogWrite(pinEnableMotor, 0);
