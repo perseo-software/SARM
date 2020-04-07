@@ -173,7 +173,7 @@ void loop(){
                 if (sector == -1 && last_sector == 0){
                     t_ciclo = now - t_inicio_resp;
                     t_inicio_resp = now;
-                    if (t_ciclo < 500){
+                    if (t_ciclo < 1000){
                         Serial.print("Alarma: t_ciclo: ");
                         Serial.println(t_ciclo);
                     }
@@ -206,11 +206,13 @@ void loop(){
     // Logica motor
     if (program_state == active){
         if (nRespiraciones > 5){
-            if (sector == -1 || sector == -2){
+            if (sector == -1){
                 motor_state = gira;
             }
             else {
-                motor_state = espera;
+                if (motor_state == gira){
+                    motor_state = espera;
+                }
             }
         }
         else {
