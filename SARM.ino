@@ -23,6 +23,7 @@ float last_pressure;
 float last_relat_pressure = 0;
 float d_pressure;
 float last_d_pressure = 0;
+int sector = 0;
 
 unsigned long now;
 unsigned long last_lcd = 0;
@@ -107,6 +108,29 @@ void loop(){
             //Calculo del diferencial de presion
             float alpha = 0.5;
             d_pressure = last_d_pressure * (1-alpha) + (relative_pressure - last_relat_pressure) * alpha;
+
+            // Deteccion de tramos
+            float umbral = 0.0015;
+            if (relative_pressure < umbral && relative_pressure > -umbral){
+                if (d_pressure < umbral && d_pressure > -umbral){
+                    sector = 0;
+                }
+            }
+            else if (relative_pressure < 0 && d_pressure < 0){
+                sector = -1;
+            }
+            else if (relative_pressure < 0 && d_pressure > 0){
+                sector = -2;
+            }
+            else if (relative_pressure > 0 && d_pressure > 0){
+                sector = 1;
+            }
+            else if (relative_pressure > 0 && d_pressure < 0){
+                sector = 2;
+            }
+            else{
+                sector = 0;
+            }
             
             last_relat_pressure = relative_pressure;
         }
