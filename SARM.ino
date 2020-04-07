@@ -23,7 +23,15 @@ float last_pressure;
 float last_relat_pressure = 0;
 float d_pressure;
 float last_d_pressure = 0;
+
+//Respiraciones
 int sector = 0;
+int last_sector = 0;
+bool start_respiracion = false;
+int nRespiraciones = 0;
+unsigned long t_inicio_resp;
+unsigned long t_ciclo;
+
 
 unsigned long now;
 unsigned long last_lcd = 0;
@@ -108,6 +116,7 @@ void loop(){
             //Calculo del diferencial de presion
             float alpha = 0.5;
             d_pressure = last_d_pressure * (1-alpha) + (relative_pressure - last_relat_pressure) * alpha;
+            last_relat_pressure = relative_pressure;
 
             // Deteccion de tramos
             float umbral = 0.0015;
@@ -132,10 +141,31 @@ void loop(){
                 sector = 0;
             }
             
-            last_relat_pressure = relative_pressure;
+            // Conteo respiraciones y tiempo promedio
+            if (!start_respiracion){
+                if (sector == -1 && last_sector == 0){
+                    t_inicio_resp = now;
+                    start_respiracion = true;
+                }
+            }
+            else {
+                if (sector == -1 && last_sector == 0){
+                    t_ciclo = now - t_inicio_resp;
+                    t_inicio_resp = now;
+                    if (t_ciclo < 0.5){
+                        Serial.print("Alarma: t_ciclo: ");
+                        Serial.println(t_ciclo);
+                    }
+                    else {
+                        nRespiraciones++;
+                        Serial.print("Respiracion ");
+                        Serial.print(nRespiraciones);
+                        Serial.print(", t_ciclo: ");
+                        Serial.println(t_ciclo);
+                    }
+                }
+            }
         }
-        
-        
     }
 
     //Serial.print(pizzometro1_state);
