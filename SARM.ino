@@ -106,8 +106,8 @@ void loop(){
         }
         else if (millis() - t_start_calib > 2000){
             mean_pressure = mean_pressure / nMuestras;
-            Serial.println("Calibración realizada\r\nPresion atm: ");
-            Serial.print(mean_pressure);
+            Serial.print("Calibracion realizada\r\nPresion atm: ");
+            Serial.println(mean_pressure);
             program_state = active;
         }
     }
@@ -158,7 +158,7 @@ void loop(){
                 if (sector == -1 && last_sector == 0){
                     t_ciclo = now - t_inicio_resp;
                     t_inicio_resp = now;
-                    if (t_ciclo < 0.5){
+                    if (t_ciclo < 500){
                         Serial.print("Alarma: t_ciclo: ");
                         Serial.println(t_ciclo);
                     }
@@ -167,7 +167,7 @@ void loop(){
                         Serial.print("Respiracion ");
                         Serial.print(nRespiraciones);
                         Serial.print(", t_ciclo: ");
-                        Serial.println(t_ciclo);
+                        Serial.println(t_ciclo/1000.0,3);
                     }
                 }
             }
@@ -187,13 +187,13 @@ void loop(){
 
         //Serial.print(F("Presion: "));
         Serial.print("#");
-        Serial.print(millis()/1000.0,3);
+        Serial.print(millis()/1000.0,2);
         Serial.print(",");
-        Serial.print(presion);
+        Serial.print(presion,4);
         Serial.print(",");
-        Serial.print(relative_pressure);
+        Serial.print(relative_pressure,4);
         Serial.print(",");
-        Serial.print(d_pressure);
+        Serial.print(d_pressure,4);
         Serial.print(",");
         Serial.println(sector);
         //Serial.print(" kPa");
