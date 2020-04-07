@@ -108,7 +108,7 @@ void loop(){
     pizzometro1_state = digitalRead(pinPizzometro1);
     pizzometro2_state = digitalRead(pinPizzometro2);
 
-    int val = analogRead(pinPotenciometro);
+    int pot = analogRead(pinPotenciometro);
 
     // Program State
     if (program_state == calibration){
@@ -205,7 +205,7 @@ void loop(){
 
     // Logica motor
     if (program_state == active){
-        if (nRespiraciones > 5){
+        if (nRespiraciones >= 3  && pot > 10){
             if (sector == -1){
                 motor_state = gira;
             }
@@ -282,7 +282,7 @@ void loop(){
             lcd.setCursor(10,0);
             lcd.print(presion);
             lcd.setCursor(10,1);
-            lcd.print(val/4);
+            lcd.print(pot/4);
         }
         else if (program_state == calibration){
             lcd.clear();
