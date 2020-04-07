@@ -13,11 +13,16 @@ Adafruit_BMP280 bmp; // I2C
 float presion; // Almacena la presion atmosferica (Pa)
 float temperatura; // Almacena la temperatura (oC)
 int altitud; // Almacena la altitud (m) (se puede usar variable float)
-unsigned long last_bmp = 0;
+unsigned long last_t_bmp = 0;
 #define refresh_rate_bmp 100    // tasa de refresco en ms
 bool new_pressure;
 float mean_pressure = 0;
 int nMuestras = 0;
+float relative_pressure;
+float last_pressure;
+float last_relat_pressure = 0;
+float d_pressure;
+float last_d_pressure = 0;
 
 unsigned long now;
 unsigned long last_lcd = 0;
@@ -67,11 +72,11 @@ void loop(){
     
     now = millis();
     // Lee valores del sensor a 10Hz
-    if (now - last_bpm >= refresh_rate_bmp){
+    if (now - last_t_bmp >= refresh_rate_bmp){
         presion = bmp.readPressure()/1000;  //En kPa
         temperatura = bmp.readTemperature();
         new_pressure = true;
-        last_bmp = now;
+        last_t_bmp = now;
     }
     
     pizzometro1_state = digitalRead(pinPizzometro1);
@@ -92,6 +97,21 @@ void loop(){
             Serial.print(mean_pressure);
             program_state = active;
         }
+    }
+
+    else if (program_state == active){
+        if (new_pressure){
+            // Calculo de la presion relativa
+            relative_pressure = presion - mean_pressure;
+
+            //Calculo del diferencial de presion
+            float alpha = 0.5;
+            d_pressure = last_d_pressure * (1-alpha) + (relative_pressure - last_relat_pressure) * alpha;
+            
+            last_relat_pressure = relative_pressure;
+        }
+        
+        
     }
 
     //Serial.print(pizzometro1_state);
