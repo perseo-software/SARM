@@ -43,12 +43,14 @@ unsigned long last_lcd = 0;
 
 bool pizzometro1_state;
 bool pizzometro2_state;
+bool last_pizzometro1_state;
+bool last_pizzometro2_state;
 
 enum State{
    booting,
    calibration,
    active,
-   idle
+   colocacion_motor
 };
 
 State program_state;
@@ -76,8 +78,10 @@ void setup(){
     pinMode(pinPizzometro1, INPUT);
     pinMode(pinPizzometro2,INPUT);
 
-    program_state = calibration;
-    t_start_calib = millis();
+    pizzometro1_state = digitalRead(pinPizzometro1);
+    pizzometro2_state = digitalRead(pinPizzometro2);
+
+    program_state = colocacion_motor;
     
 }
 
@@ -92,6 +96,8 @@ void loop(){
         last_t_bmp = now;
     }
     
+    last_pizzometro1_state = pizzometro1_state;
+    last_pizzometro2_state = pizzometro2_state;
     pizzometro1_state = digitalRead(pinPizzometro1);
     pizzometro2_state = digitalRead(pinPizzometro2);
 
@@ -173,11 +179,20 @@ void loop(){
                     }
                 }
             }
+        }        
+    }   //Fin estado active
+
+    else if (program_state == colocacion_motor){
+    // Motor control
+        if (pizzometro1_state && !last_pizzometro1_state){
+            analogWrite(pinEnableMotor, 0);
+            program_state = calibration;
+            t_start_calib = millis();
+        }
+        else{
+            analogWrite(pinEnableMotor, 100);
         }
     }
-    
-    // Motor control
-    analogWrite(pinEnableMotor, val/4);
 
     now = millis();
     if (now - last_t_serial >= refresh_rate_serial){
