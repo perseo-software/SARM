@@ -33,7 +33,7 @@ unsigned long t_inicio_resp;
 unsigned long t_ciclo;
 
 //Informacion por Serial
-last_t_serial = 0;
+unsigned long last_t_serial = 0;
 #define refresh_rate_serial 100    // tasa de refresco en ms
 
 
@@ -207,7 +207,7 @@ void loop(){
     now = millis();
     if (now - last_lcd >= refresh_lcd_rate){
         last_lcd = now;
-        if (state == active){
+        if (program_state == active){
             lcd.clear();
             lcd.setCursor(0,0);
             lcd.print("Pres[kPa]:");
@@ -219,7 +219,7 @@ void loop(){
             lcd.setCursor(10,1);
             lcd.print(val/4);
         }
-        else if (state == calibration){
+        else if (program_state == calibration){
             lcd.clear();
             lcd.setCursor(2,0);
             lcd.print("**** SARM ****");
