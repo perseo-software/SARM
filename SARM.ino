@@ -13,6 +13,11 @@ Adafruit_BMP280 bmp; // I2C
 float presion; // Almacena la presion atmosferica (Pa)
 float temperatura; // Almacena la temperatura (oC)
 int altitud; // Almacena la altitud (m) (se puede usar variable float)
+unsigned long last_bmp = 0;
+#define refresh_rate_bmp 100    // tasa de refresco en ms
+bool new_presure;
+float mean_presure = 0;
+int nMuestras = 0;
 
 unsigned long now;
 unsigned long last_lcd = 0;
@@ -21,8 +26,19 @@ unsigned long last_lcd = 0;
 bool pizzometro1_state;
 bool pizzometro2_state;
 
+enum State{
+   booting,
+   calibration,
+   active,
+   idle
+};
+
+State program_state;
+unsigned long t_start_calib;
 
 void setup(){
+    program_state = booting;
+
     lcd.begin(16,2);
     lcd.backlight();
     lcd.setCursor(2,0);
@@ -42,16 +58,41 @@ void setup(){
     pinMode(pinPizzometro1, INPUT);
     pinMode(pinPizzometro2,INPUT);
 
+    program_state = calibration;
+    t_start_calib = millis();
+    
 }
 
 void loop(){
-    // Lee valores del sensor:
-    presion = bmp.readPressure()/1000;
-    temperatura = bmp.readTemperature();
-    //altitud = bmp.readAltitude (1015); // Ajustar con el valor local
-
+    
+    now = millis();
+    // Lee valores del sensor a 10Hz
+    if (now - last_bpm >= refresh_rate_bmp){
+        presion = bmp.readPressure()/1000;  //En kPa
+        temperatura = bmp.readTemperature();
+        newPresure = true;
+        last_bmp = now;
+    }
+    
     pizzometro1_state = digitalRead(pinPizzometro1);
     pizzometro2_state = digitalRead(pinPizzometro2);
+
+    int val = analogRead(pinPotenciometro);
+
+    // Program State
+    if (program_state == calibration){
+        if (millis() - t_start_calib < 2000 && newPresure){
+            mean_presure += presion;
+            nMuestras++;
+            newPresure = false;
+        }
+        else if (millis() - t_start_calib > 2000){
+            mean_presure = mean_presure / nMuestras;
+            Serial.println("Calibración realizada\r\nPresion atm: ");
+            Serial.print(mean_presure);
+            program_state = active;
+        }
+    }
 
     //Serial.print(pizzometro1_state);
     //Serial.print(',');
@@ -67,7 +108,7 @@ void loop(){
     //Serial.print(temperatura);
     //Serial.println(" *C");
     
-    int val = analogRead(pinPotenciometro);
+    // Motor control
     analogWrite(pinEnableMotor, val/4);
 
     //LCD update
