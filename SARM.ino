@@ -52,9 +52,16 @@ enum State{
    active,
    colocacion_motor
 };
+enum MotorState{
+   espera,
+   stop,
+   gira,
+   no_hacer_nada
+};
 
 State program_state;
 unsigned long t_start_calib;
+MotorState motor_state;
 
 void setup(){
     program_state = booting;
@@ -184,8 +191,10 @@ void loop(){
 
     else if (program_state == colocacion_motor){
     // Motor control
+        motor_state = no_hacer_nada;
         if (pizzometro1_state && !last_pizzometro1_state){
             analogWrite(pinEnableMotor, 0);
+            motor_state = stop;
             program_state = calibration;
             t_start_calib = millis();
         }
@@ -193,6 +202,43 @@ void loop(){
             analogWrite(pinEnableMotor, 100);
         }
     }
+
+    // Logica motor
+    if (program_state == active){
+        if (nRespiraciones > 5){
+            if (sector == -1 || sector == -2){
+                motor_state = gira;
+            }
+            else {
+                motor_state = espera;
+            }
+        }
+        else {
+            motor_state = stop;
+        }
+    }
+    
+
+    //Programa motor
+    if (motor_state == espera){
+        if (pizzometro1_state && !last_pizzometro1_state){
+            analogWrite(pinEnableMotor, 0);
+            motor_state = stop;
+        }
+        else{
+            analogWrite(pinEnableMotor, 100);
+        }
+    }
+    else if (motor_state == stop){
+            analogWrite(pinEnableMotor, 0);
+    }
+    else if (motor_state == gira){
+        analogWrite(pinEnableMotor, 255);
+    }
+    //else if (motor_state == no_hacer_nada){}
+
+
+    //Envio informacion por Serial
 
     now = millis();
     if (now - last_t_serial >= refresh_rate_serial){
@@ -242,6 +288,13 @@ void loop(){
             lcd.print("**** SARM ****");
             lcd.setCursor(0,1); 
             lcd.print("-calibration-");
+        }
+        else if (program_state == colocacion_motor){
+            lcd.clear();
+            lcd.setCursor(2,0);
+            lcd.print("**** SARM ****");
+            lcd.setCursor(0,1); 
+            lcd.print("-colocacion motor-");
         }
     }
     
