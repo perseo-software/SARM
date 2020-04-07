@@ -115,6 +115,7 @@ void loop(){
     else if (program_state == active){
         if (new_pressure){
             new_pressure = false;
+            last_sector = sector;
 
             // Calculo de la presion relativa
             relative_pressure = presion - mean_pressure;
@@ -123,9 +124,10 @@ void loop(){
             float alpha = 0.5;
             d_pressure = last_d_pressure * (1-alpha) + (relative_pressure - last_relat_pressure) * alpha;
             last_relat_pressure = relative_pressure;
+            last_d_pressure = d_pressure;
 
             // Deteccion de tramos
-            float umbral = 0.0015;
+            float umbral = 0.0035;
             if (relative_pressure < umbral && relative_pressure > -umbral){
                 if (d_pressure < umbral && d_pressure > -umbral){
                     sector = 0;
