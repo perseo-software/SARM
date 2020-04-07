@@ -32,6 +32,10 @@ int nRespiraciones = 0;
 unsigned long t_inicio_resp;
 unsigned long t_ciclo;
 
+//Informacion por Serial
+last_t_serial = 0;
+#define refresh_rate_serial 100    // tasa de refresco en ms
+
 
 unsigned long now;
 unsigned long last_lcd = 0;
@@ -95,7 +99,7 @@ void loop(){
 
     // Program State
     if (program_state == calibration){
-        if (millis() - t_start_calib < 2000 && newPresure){
+        if (millis() - t_start_calib < 2000 && new_pressure){
             mean_pressure += presion;
             nMuestras++;
             new_pressure = false;
@@ -110,6 +114,8 @@ void loop(){
 
     else if (program_state == active){
         if (new_pressure){
+            new_pressure = false;
+
             // Calculo de la presion relativa
             relative_pressure = presion - mean_pressure;
 
@@ -141,7 +147,7 @@ void loop(){
                 sector = 0;
             }
             
-            // Conteo respiraciones y tiempo promedio
+            // Conteo respiraciones y tiempo
             if (!start_respiracion){
                 if (sector == -1 && last_sector == 0){
                     t_inicio_resp = now;
@@ -167,23 +173,35 @@ void loop(){
             }
         }
     }
-
-    //Serial.print(pizzometro1_state);
-    //Serial.print(',');
-    //Serial.println(pizzometro2_state);
-
-    //Serial.print(F("Presion: "));
-    Serial.print(millis()/1000.0,3);
-    Serial.print(",");
-    Serial.println(presion);
-    //Serial.print(" kPa");
-    //Serial.print("\t");
-    //Serial.print(("Temp: "));
-    //Serial.print(temperatura);
-    //Serial.println(" *C");
     
     // Motor control
     analogWrite(pinEnableMotor, val/4);
+
+    now = millis();
+    if (now - last_t_serial >= refresh_rate_serial){
+        last_t_serial = now;
+
+        //Serial.print(pizzometro1_state);
+        //Serial.print(',');
+        //Serial.println(pizzometro2_state);
+
+        //Serial.print(F("Presion: "));
+        Serial.print("#");
+        Serial.print(millis()/1000.0,3);
+        Serial.print(",");
+        Serial.print(presion);
+        Serial.print(",");
+        Serial.print(relative_pressure);
+        Serial.print(",");
+        Serial.print(d_pressure);
+        Serial.print(",");
+        Serial.println(sector);
+        //Serial.print(" kPa");
+        //Serial.print("\t");
+        //Serial.print(("Temp: "));
+        //Serial.print(temperatura);
+        //Serial.println(" *C");
+    }
 
     //LCD update
     now = millis();
