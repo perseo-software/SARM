@@ -60,7 +60,7 @@ void setup(){
     lcd.begin(16,2);
     lcd.backlight();
     lcd.setCursor(2,0);
-    lcd.print("*** SARM ****");
+    lcd.print("**** SARM ****");
     lcd.setCursor(0,1); 
     lcd.print("-booting-");
 
@@ -207,17 +207,25 @@ void loop(){
     now = millis();
     if (now - last_lcd >= refresh_lcd_rate){
         last_lcd = now;
+        if (state == active){
+            lcd.clear();
+            lcd.setCursor(0,0);
+            lcd.print("Pres[kPa]:");
+            lcd.setCursor(0,1);
+            lcd.print("Vel[RPM]:");
 
-        lcd.clear();
-        lcd.setCursor(0,0);
-        lcd.print("Pres[kPa]:");
-        lcd.setCursor(0,1);
-        lcd.print("Vel[RPM]:");
-
-        lcd.setCursor(10,0);
-        lcd.print(presion);
-        lcd.setCursor(10,1);
-        lcd.print(val/4);
+            lcd.setCursor(10,0);
+            lcd.print(presion);
+            lcd.setCursor(10,1);
+            lcd.print(val/4);
+        }
+        else if (state == calibration){
+            lcd.clear();
+            lcd.setCursor(2,0);
+            lcd.print("**** SARM ****");
+            lcd.setCursor(0,1); 
+            lcd.print("-calibration-");
+        }
     }
     
 }
