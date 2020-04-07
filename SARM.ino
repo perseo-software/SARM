@@ -183,21 +183,21 @@ void loop(){
     if (now - last_t_serial >= refresh_rate_serial){
         last_t_serial = now;
 
-        //Serial.print(pizzometro1_state);
-        //Serial.print(',');
-        //Serial.println(pizzometro2_state);
+        Serial.print(pizzometro1_state);
+        Serial.print(',');
+        Serial.println(pizzometro2_state);
 
         //Serial.print(F("Presion: "));
-        Serial.print("#");
-        Serial.print(millis()/1000.0,2);
-        Serial.print(",");
-        Serial.print(presion,4);
-        Serial.print(",");
-        Serial.print(relative_pressure,4);
-        Serial.print(",");
-        Serial.print(d_pressure,4);
-        Serial.print(",");
-        Serial.println(sector);
+        //Serial.print("#");
+        //Serial.print(millis()/1000.0,2);
+        //Serial.print(",");
+        //Serial.print(presion,4);
+        //Serial.print(",");
+        //Serial.print(relative_pressure,4);
+        //Serial.print(",");
+        //Serial.print(d_pressure,4);
+        //Serial.print(",");
+        //Serial.println(sector);
         //Serial.print(" kPa");
         //Serial.print("\t");
         //Serial.print(("Temp: "));
