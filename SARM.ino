@@ -15,8 +15,8 @@ float temperatura; // Almacena la temperatura (oC)
 int altitud; // Almacena la altitud (m) (se puede usar variable float)
 unsigned long last_bmp = 0;
 #define refresh_rate_bmp 100    // tasa de refresco en ms
-bool new_presure;
-float mean_presure = 0;
+bool new_pressure;
+float mean_pressure = 0;
 int nMuestras = 0;
 
 unsigned long now;
@@ -70,7 +70,7 @@ void loop(){
     if (now - last_bpm >= refresh_rate_bmp){
         presion = bmp.readPressure()/1000;  //En kPa
         temperatura = bmp.readTemperature();
-        newPresure = true;
+        new_pressure = true;
         last_bmp = now;
     }
     
@@ -82,14 +82,14 @@ void loop(){
     // Program State
     if (program_state == calibration){
         if (millis() - t_start_calib < 2000 && newPresure){
-            mean_presure += presion;
+            mean_pressure += presion;
             nMuestras++;
-            newPresure = false;
+            new_pressure = false;
         }
         else if (millis() - t_start_calib > 2000){
-            mean_presure = mean_presure / nMuestras;
+            mean_pressure = mean_pressure / nMuestras;
             Serial.println("Calibración realizada\r\nPresion atm: ");
-            Serial.print(mean_presure);
+            Serial.print(mean_pressure);
             program_state = active;
         }
     }
