@@ -43,16 +43,25 @@ unsigned long last_lcd = 0;
 
 bool pizzometro1_state;
 bool pizzometro2_state;
+bool last_pizzometro1_state;
+bool last_pizzometro2_state;
 
 enum State{
    booting,
    calibration,
    active,
-   idle
+   colocacion_motor
+};
+enum MotorState{
+   espera,
+   stop,
+   gira,
+   no_hacer_nada
 };
 
 State program_state;
 unsigned long t_start_calib;
+MotorState motor_state;
 
 void setup(){
     program_state = booting;
@@ -76,8 +85,10 @@ void setup(){
     pinMode(pinPizzometro1, INPUT);
     pinMode(pinPizzometro2,INPUT);
 
-    program_state = calibration;
-    t_start_calib = millis();
+    pizzometro1_state = digitalRead(pinPizzometro1);
+    pizzometro2_state = digitalRead(pinPizzometro2);
+
+    program_state = colocacion_motor;
     
 }
 
@@ -92,10 +103,12 @@ void loop(){
         last_t_bmp = now;
     }
     
+    last_pizzometro1_state = pizzometro1_state;
+    last_pizzometro2_state = pizzometro2_state;
     pizzometro1_state = digitalRead(pinPizzometro1);
     pizzometro2_state = digitalRead(pinPizzometro2);
 
-    int val = analogRead(pinPotenciometro);
+    int pot = analogRead(pinPotenciometro);
 
     // Program State
     if (program_state == calibration){
@@ -160,7 +173,7 @@ void loop(){
                 if (sector == -1 && last_sector == 0){
                     t_ciclo = now - t_inicio_resp;
                     t_inicio_resp = now;
-                    if (t_ciclo < 500){
+                    if (t_ciclo < 1000){
                         Serial.print("Alarma: t_ciclo: ");
                         Serial.println(t_ciclo);
                     }
@@ -173,21 +186,66 @@ void loop(){
                     }
                 }
             }
+        }        
+    }   //Fin estado active
+
+    else if (program_state == colocacion_motor){
+    // Motor control
+        motor_state = no_hacer_nada;
+        if (pizzometro1_state && !last_pizzometro1_state){
+            analogWrite(pinEnableMotor, 0);
+            motor_state = stop;
+            program_state = calibration;
+            t_start_calib = millis();
+        }
+        else{
+            analogWrite(pinEnableMotor, 100);
+        }
+    }
+
+    // Logica motor
+    if (program_state == active){
+        if (nRespiraciones >= 3  && pot > 10){
+            if (sector == -1){
+                motor_state = gira;
+            }
+            else {
+                if (motor_state == gira){
+                    motor_state = espera;
+                }
+            }
+        }
+        else {
+            motor_state = stop;
         }
     }
     
-    // Motor control
-    analogWrite(pinEnableMotor, val/4);
+
+    //Programa motor
+    if (motor_state == espera){
+        if (pizzometro1_state && !last_pizzometro1_state){
+            analogWrite(pinEnableMotor, 0);
+            motor_state = stop;
+        }
+        else{
+            analogWrite(pinEnableMotor, 100);
+        }
+    }
+    else if (motor_state == stop){
+            analogWrite(pinEnableMotor, 0);
+    }
+    else if (motor_state == gira){
+        analogWrite(pinEnableMotor, 255);
+    }
+    //else if (motor_state == no_hacer_nada){}
+
+
+    //Envio informacion por Serial
 
     now = millis();
     if (now - last_t_serial >= refresh_rate_serial){
         last_t_serial = now;
 
-        //Serial.print(pizzometro1_state);
-        //Serial.print(',');
-        //Serial.println(pizzometro2_state);
-
-        //Serial.print(F("Presion: "));
         Serial.print("#");
         Serial.print(millis()/1000.0,2);
         Serial.print(",");
@@ -197,7 +255,15 @@ void loop(){
         Serial.print(",");
         Serial.print(d_pressure,4);
         Serial.print(",");
-        Serial.println(sector);
+        Serial.print(sector);
+        Serial.print(",");
+        Serial.print(program_state);
+        Serial.print(",");
+        Serial.print(motor_state);
+        Serial.print(",");
+        Serial.print(pizzometro1_state);
+        Serial.print(",");
+        Serial.println(pizzometro2_state);
         //Serial.print(" kPa");
         //Serial.print("\t");
         //Serial.print(("Temp: "));
@@ -219,7 +285,7 @@ void loop(){
             lcd.setCursor(10,0);
             lcd.print(presion);
             lcd.setCursor(10,1);
-            lcd.print(val/4);
+            lcd.print(pot/4);
         }
         else if (program_state == calibration){
             lcd.clear();
@@ -227,6 +293,13 @@ void loop(){
             lcd.print("**** SARM ****");
             lcd.setCursor(0,1); 
             lcd.print("-calibration-");
+        }
+        else if (program_state == colocacion_motor){
+            lcd.clear();
+            lcd.setCursor(2,0);
+            lcd.print("**** SARM ****");
+            lcd.setCursor(0,1); 
+            lcd.print("-colocacion motor-");
         }
     }
     
