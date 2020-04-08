@@ -246,7 +246,6 @@ void loop(){
     if (now - last_t_serial >= refresh_rate_serial){
         last_t_serial = now;
 
-        Serial.print(F("Presion: "));
         Serial.print("#");
         Serial.print(millis()/1000.0,2);
         Serial.print(",");
