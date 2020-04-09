@@ -1,27 +1,20 @@
 #include "programa_sensorPresion.h"
+#include "Programa_leva.h"
 #include <LiquidCrystal_I2C.h>
 
 #define pinPotenciometro A1
-#define pinEnableMotor 3
-#define pinPizzometro1 5
-#define pinPizzometro2 2
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Programa_sensorPresion prog_pSensor;
+Programa_leva prog_leva;
 
 //Informacion por Serial
 unsigned long last_t_serial = 0;
 #define refresh_rate_serial 100    // tasa de refresco en ms
 
-
 unsigned long now;
 unsigned long last_lcd = 0;
 #define refresh_lcd_rate 500    // tasa de refresco en ms
-
-bool pizzometro1_state;
-bool pizzometro2_state;
-bool last_pizzometro1_state;
-bool last_pizzometro2_state;
 
 bool error_pSensor;
 
@@ -55,16 +48,7 @@ void setup(){
 
     Serial.begin(115200);
     error_pSensor = prog_pSensor.begin_();
-    
-    
-    pinMode(pinEnableMotor, OUTPUT);
-    analogWrite(pinEnableMotor, 0);
-
-    pinMode(pinPizzometro1, INPUT);
-    pinMode(pinPizzometro2,INPUT);
-
-    pizzometro1_state = digitalRead(pinPizzometro1);
-    pizzometro2_state = digitalRead(pinPizzometro2);
+    prog_leva.setup();
 
     program_state = colocacion_motor;
     
