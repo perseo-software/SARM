@@ -1,5 +1,4 @@
-#include "Adafruit_BMP280.h"
-//#include <Wire.h>   //Ya incluida en Adafruit_BMP280.h
+#include "programa_sensorPresion.h"
 #include <LiquidCrystal_I2C.h>
 
 #define pinPotenciometro A1
@@ -8,29 +7,7 @@
 #define pinPizzometro2 2
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
-Adafruit_BMP280 bmp; // I2C
-
-float presion; // Almacena la presion atmosferica (Pa)
-float temperatura; // Almacena la temperatura (oC)
-int altitud; // Almacena la altitud (m) (se puede usar variable float)
-unsigned long last_t_bmp = 0;
-#define refresh_rate_bmp 100    // tasa de refresco en ms
-bool new_pressure;
-float mean_pressure = 0;
-int nMuestras = 0;
-float relative_pressure;
-float last_pressure;
-float last_relat_pressure = 0;
-float d_pressure;
-float last_d_pressure = 0;
-
-//Respiraciones
-int sector = 0;
-int last_sector = 0;
-bool start_respiracion = false;
-int nRespiraciones = 0;
-unsigned long t_inicio_resp;
-unsigned long t_ciclo;
+Programa_sensorPresion prog_pSensor;
 
 //Informacion por Serial
 unsigned long last_t_serial = 0;
@@ -46,11 +23,14 @@ bool pizzometro2_state;
 bool last_pizzometro1_state;
 bool last_pizzometro2_state;
 
+bool error_pSensor;
+
 enum State{
    booting,
    calibration,
    active,
-   colocacion_motor
+   colocacion_motor,
+   error_BMP
 };
 enum MotorState{
    espera,
@@ -74,10 +54,8 @@ void setup(){
     lcd.print("-booting-");
 
     Serial.begin(115200);
-    if (!bmp.begin()) {
-        Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
-        while (1);
-    }
+    error_pSensor = prog_pSensor.begin_();
+    
     
     pinMode(pinEnableMotor, OUTPUT);
     analogWrite(pinEnableMotor, 0);
@@ -96,12 +74,8 @@ void loop(){
     
     now = millis();
     // Lee valores del sensor a 10Hz
-    if (now - last_t_bmp >= refresh_rate_bmp){
-        presion = bmp.readPressure()/1000;  //En kPa
-        temperatura = bmp.readTemperature();
-        new_pressure = true;
-        last_t_bmp = now;
-    }
+    prog_pSensor.getMuestra();
+    
     
     last_pizzometro1_state = pizzometro1_state;
     last_pizzometro2_state = pizzometro2_state;
