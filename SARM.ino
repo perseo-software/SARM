@@ -25,16 +25,9 @@ enum State{
    colocacion_motor,
    error_BMP
 };
-enum MotorState{
-   espera,
-   stop,
-   gira,
-   no_hacer_nada
-};
 
 State program_state;
 unsigned long t_start_calib;
-MotorState motor_state;
 
 void setup(){
     program_state = booting;
@@ -59,12 +52,6 @@ void loop(){
     now = millis();
     // Lee valores del sensor a 10Hz
     prog_pSensor.getMuestra();
-    
-    last_pizzometro1_state = pizzometro1_state;
-    last_pizzometro2_state = pizzometro2_state;
-    pizzometro1_state = digitalRead(pinPizzometro1);
-    pizzometro2_state = digitalRead(pinPizzometro2);
-
     int pot = analogRead(pinPotenciometro);
 
     // Program State
@@ -79,51 +66,26 @@ void loop(){
         prog_pSensor.run();
         if (prog_pSensor.nRespiraciones >= 3  && pot > 10){
             if (prog_pSensor.sector == -1){
-                motor_state = gira;
+                prog_leva.giraMotor();
             }
             else {
-                if (motor_state == gira){
-                    motor_state = espera;
-                }
+                prog_leva.go2waitPos();
             }
         }
         else {
-            motor_state = stop;
+            prog_leva.stopMotor();
         }
     }
 
     else if (program_state == colocacion_motor){
-    // Motor control
-        motor_state = no_hacer_nada;
-        if (pizzometro1_state && !last_pizzometro1_state){
-            analogWrite(pinEnableMotor, 0);
-            motor_state = stop;
+        bool arrived = prog_leva.go2waitPos();
+        if (arrived){
             program_state = calibration;
             t_start_calib = millis();
         }
-        else{
-            analogWrite(pinEnableMotor, 100);
-        }
     }
     
-
-    //Programa motor
-    if (motor_state == espera){
-        if (pizzometro1_state && !last_pizzometro1_state){
-            analogWrite(pinEnableMotor, 0);
-            motor_state = stop;
-        }
-        else{
-            analogWrite(pinEnableMotor, 100);
-        }
-    }
-    else if (motor_state == stop){
-            analogWrite(pinEnableMotor, 0);
-    }
-    else if (motor_state == gira){
-        analogWrite(pinEnableMotor, 255);
-    }
-    //else if (motor_state == no_hacer_nada){}
+    prog_leva.run();
 
 
     //Envio informacion por Serial
