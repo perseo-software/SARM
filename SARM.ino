@@ -76,7 +76,6 @@ void loop(){
     // Lee valores del sensor a 10Hz
     prog_pSensor.getMuestra();
     
-    
     last_pizzometro1_state = pizzometro1_state;
     last_pizzometro2_state = pizzometro2_state;
     pizzometro1_state = digitalRead(pinPizzometro1);
@@ -86,15 +85,8 @@ void loop(){
 
     // Program State
     if (program_state == calibration){
-        if (millis() - t_start_calib < 2000 && new_pressure){
-            mean_pressure += presion;
-            nMuestras++;
-            new_pressure = false;
-        }
-        else if (millis() - t_start_calib > 2000){
-            mean_pressure = mean_pressure / nMuestras;
-            Serial.print("Calibracion realizada\r\nPresion atm: ");
-            Serial.println(mean_pressure);
+        bool calib_done = prog_pSensor.doCalibration();
+        if (calib_done){
             program_state = active;
         }
     }

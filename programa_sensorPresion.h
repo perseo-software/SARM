@@ -33,4 +33,5 @@ public:
 
     int begin_();
     void getMuestra();
+    void doCalibration();
 };
