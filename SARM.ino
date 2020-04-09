@@ -1,6 +1,6 @@
+#include <LiquidCrystal_I2C.h>
 #include "programa_sensorPresion.h"
 #include "Programa_leva.h"
-#include <LiquidCrystal_I2C.h>
 
 #define pinPotenciometro A1
 
@@ -27,7 +27,6 @@ enum State{
 };
 
 State program_state;
-unsigned long t_start_calib;
 
 void setup(){
     program_state = booting;
@@ -81,15 +80,13 @@ void loop(){
         bool arrived = prog_leva.go2waitPos();
         if (arrived){
             program_state = calibration;
-            t_start_calib = millis();
+            prog_pSensor.t_start_calib = millis();
         }
     }
-    
+
     prog_leva.run();
 
-
     //Envio informacion por Serial
-
     now = millis();
     if (now - last_t_serial >= refresh_rate_serial){
         last_t_serial = now;

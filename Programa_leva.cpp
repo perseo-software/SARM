@@ -24,7 +24,7 @@ void Programa_leva::run(){
     if (estado == stop){
         analogWrite(pinEnableMotor, 0);
     }
-    else if (etado == giro){
+    else if (estado == giro){
         analogWrite(pinEnableMotor, 255);
     }
     else if (estado == colocacion){
@@ -41,7 +41,7 @@ void Programa_leva::run(){
     }
 }
 
-void Programa_leva::gira(){
+void Programa_leva::giraMotor(){
     estado = giro;
 }
 
@@ -51,7 +51,7 @@ void Programa_leva::stopMotor(){
 
 int Programa_leva::go2waitPos(){
     if (estado != waitPos){
-        estado = colocacion();
+        estado = colocacion;
         return 0;
     }
     else{

@@ -20,7 +20,7 @@ void Programa_sensorPresion::getMuestra(){
     }
 }
 
-void Programa_sensorPresion::doCalibration(){
+int Programa_sensorPresion::doCalibration(){
     
     if (millis() - t_start_calib < 2000 && new_pressure){
         mean_pressure += presion;
@@ -36,7 +36,7 @@ void Programa_sensorPresion::doCalibration(){
     return 0;
 }
 
-int Programa_sensorPresion::run(){
+void Programa_sensorPresion::run(){
     if (new_pressure){
         new_pressure = false;
         last_sector = sector;
@@ -74,6 +74,7 @@ int Programa_sensorPresion::run(){
         }
 
         // Conteo respiraciones y tiempo
+        unsigned long now = millis();
         if (!start_respiracion){
             if (sector == -1 && last_sector == 0){
                 t_inicio_resp = now;

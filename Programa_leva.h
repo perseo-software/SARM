@@ -1,4 +1,5 @@
 #pragma once
+#include "Arduino.h"
 
 #define pinEnableMotor 3
 #define pinPizzometro1 5
@@ -15,10 +16,10 @@ class Programa_leva{
     
 public:
     State estado;
-    void setup_();
+    void setup();
     void updateSensors();
     void run();
     void giraMotor();
     void stopMotor();
-    void go2waitPos();
+    int go2waitPos();
 };
