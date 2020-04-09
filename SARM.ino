@@ -93,6 +93,19 @@ void loop(){
 
     else if (program_state == active){
         prog_pSensor.run();
+        if (prog_pSensor.nRespiraciones >= 3  && pot > 10){
+            if (prog_pSensor.sector == -1){
+                motor_state = gira;
+            }
+            else {
+                if (motor_state == gira){
+                    motor_state = espera;
+                }
+            }
+        }
+        else {
+            motor_state = stop;
+        }
     }
 
     else if (program_state == colocacion_motor){
@@ -106,23 +119,6 @@ void loop(){
         }
         else{
             analogWrite(pinEnableMotor, 100);
-        }
-    }
-
-    // Logica motor
-    if (program_state == active){
-        if (nRespiraciones >= 3  && pot > 10){
-            if (sector == -1){
-                motor_state = gira;
-            }
-            else {
-                if (motor_state == gira){
-                    motor_state = espera;
-                }
-            }
-        }
-        else {
-            motor_state = stop;
         }
     }
     
