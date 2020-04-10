@@ -100,3 +100,15 @@ void Programa_sensorPresion::run(){
         }
     }
 }
+
+void Programa_sensorPresion::printCSV(){
+    Serial.print(presion,4);
+    Serial.print(",");
+    Serial.print(relative_pressure,4);
+    Serial.print(",");
+    Serial.print(d_pressure,4);
+    Serial.print(",");
+    Serial.print(sector);
+    Serial.print(",");
+    Serial.print(nRespiraciones);
+}

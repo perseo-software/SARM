@@ -58,3 +58,11 @@ int Programa_leva::go2waitPos(){
         return 1;
     }
 }
+
+void Programa_leva::printCSV(){
+    Serial.print(estado);
+    Serial.print(",");
+    Serial.print(pizzometro1_state);
+    Serial.print(",");
+    Serial.println(pizzometro2_state);
+}

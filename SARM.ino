@@ -94,26 +94,11 @@ void loop(){
         Serial.print("#");
         Serial.print(millis()/1000.0,2);
         Serial.print(",");
-        Serial.print(presion,4);
-        Serial.print(",");
-        Serial.print(relative_pressure,4);
-        Serial.print(",");
-        Serial.print(d_pressure,4);
-        Serial.print(",");
-        Serial.print(sector);
+        prog_pSensor.printCSV();
         Serial.print(",");
         Serial.print(program_state);
         Serial.print(",");
-        Serial.print(motor_state);
-        Serial.print(",");
-        Serial.print(pizzometro1_state);
-        Serial.print(",");
-        Serial.println(pizzometro2_state);
-        //Serial.print(" kPa");
-        //Serial.print("\t");
-        //Serial.print(("Temp: "));
-        //Serial.print(temperatura);
-        //Serial.println(" *C");
+        prog_leva.printCSV();
     }
 
     //LCD update
@@ -128,7 +113,7 @@ void loop(){
             lcd.print("Vel[RPM]:");
 
             lcd.setCursor(10,0);
-            lcd.print(presion);
+            lcd.print(prog_pSensor.presion);
             lcd.setCursor(10,1);
             lcd.print(pot/4);
         }

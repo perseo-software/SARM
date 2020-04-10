@@ -22,4 +22,5 @@ public:
     void giraMotor();
     void stopMotor();
     int go2waitPos();
+    void printCSV();
 };

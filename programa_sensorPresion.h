@@ -35,4 +35,5 @@ public:
     void getMuestra();
     int doCalibration();
     void run();
+    void printCSV();
 };
