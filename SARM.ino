@@ -63,7 +63,6 @@ void loop(){
     }
 
     else if (program_state == active){
-        Serial.println("PROGRAM:active");
         prog_pSensor.run();
         if (prog_pSensor.nRespiraciones >= 3  && pot > 10){
             if (prog_pSensor.sector == -1){
@@ -79,10 +78,8 @@ void loop(){
     }
 
     else if (program_state == colocacion_motor){
-        Serial.println("PROGRAM:coloacionMotor");
         bool arrived = prog_leva.go2waitPos();
         if (arrived){
-            Serial.println("ARRIVED");
             program_state = calibration;
             prog_pSensor.t_start_calib = millis();
         }

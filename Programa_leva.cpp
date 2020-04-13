@@ -21,21 +21,16 @@ void Programa_leva::updateSensors(){
 
 void Programa_leva::run(){
 
-    Serial.println("LEVA.RUN");
-
     if (estado == stop){
-        Serial.println("estado=stop");
         analogWrite(pinEnableMotor, 0);
     }
     else if (estado == giro){
         analogWrite(pinEnableMotor, 255);
     }
     else if (estado == colocacion){
-        Serial.println("estado=colocacion");
         if (pizzometro1_state && !last_pizzometro1_state){
             analogWrite(pinEnableMotor, 0);
             estado = waitPos;
-            Serial.println("LEVA.2waitPos_state");
         }
         else{
             analogWrite(pinEnableMotor, 100);
@@ -51,14 +46,11 @@ void Programa_leva::giraMotor(){
 }
 
 void Programa_leva::stopMotor(){
-    Serial.println("LEVA.STOP_MOTOR");
     estado = stop;
 }
 
 int Programa_leva::go2waitPos(){
-    Serial.println("go2waitPos");
     if (estado != waitPos){
-        Serial.println("a estado colocacion");
         estado = colocacion;
         return 0;
     }
