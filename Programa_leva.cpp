@@ -7,8 +7,8 @@ void Programa_leva::setup(){
     pinMode(pinPizzometro1, INPUT);
     pinMode(pinPizzometro2,INPUT);
 
-    last_pizzometro1_state = digitalRead(pinPizzometro1);
-    last_pizzometro2_state = digitalRead(pinPizzometro2);
+    pizzometro1_state = digitalRead(pinPizzometro1);
+    pizzometro2_state = digitalRead(pinPizzometro2);
 }
 
 void Programa_leva::updateSensors(){
