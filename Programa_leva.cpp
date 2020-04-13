@@ -7,8 +7,8 @@ void Programa_leva::setup(){
     pinMode(pinPizzometro1, INPUT);
     pinMode(pinPizzometro2,INPUT);
 
-    pizzometro1_state = digitalRead(pinPizzometro1);
-    pizzometro2_state = digitalRead(pinPizzometro2);
+    last_pizzometro1_state = digitalRead(pinPizzometro1);
+    last_pizzometro2_state = digitalRead(pinPizzometro2);
 }
 
 void Programa_leva::updateSensors(){
@@ -35,7 +35,7 @@ void Programa_leva::run(){
         if (pizzometro1_state && !last_pizzometro1_state){
             analogWrite(pinEnableMotor, 0);
             estado = waitPos;
-            Serial.println("LEVA.RUN");
+            Serial.println("LEVA.2waitPos_state");
         }
         else{
             analogWrite(pinEnableMotor, 100);

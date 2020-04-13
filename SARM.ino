@@ -51,6 +51,7 @@ void loop(){
     now = millis();
     // Lee valores del sensor a 10Hz
     prog_pSensor.getMuestra();
+    prog_leva.updateSensors();
     int pot = analogRead(pinPotenciometro);
 
     // Program State
