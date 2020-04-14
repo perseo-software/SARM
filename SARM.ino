@@ -1,6 +1,7 @@
 #include <LiquidCrystal_I2C.h>
 #include "programa_sensorPresion.h"
 #include "Programa_leva.h"
+#include "FS2012.h"
 
 #define pinPotenciometro A1
 
@@ -43,6 +44,14 @@ void setup(){
     prog_leva.setup();
 
     program_state = colocacion_motor;
+
+    float flowRate;
+    while(1){
+        flowRate = getFlowRate();
+        //Serial.print("flow rate:");
+        Serial.println(flowRate);
+        delay(100);
+    }
     
 }
 
