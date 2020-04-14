@@ -4,6 +4,7 @@
 #include "FS2012.h"
 
 #define pinPotenciometro A1
+#define pinSensorFlujoAnalogico A7
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 Programa_sensorPresion prog_pSensor;
@@ -48,8 +49,11 @@ void setup(){
     float flowRate;
     while(1){
         flowRate = getFlowRate();
+        float analog_flowRate = analogRead(pinSensorFlujoAnalogico) / 1024.0 * 5 * 0.4;
         //Serial.print("flow rate:");
-        Serial.println(flowRate);
+        Serial.print(flowRate,3);
+        Serial.print(",");
+        Serial.println(analog_flowRate,3);
         delay(100);
     }
     
