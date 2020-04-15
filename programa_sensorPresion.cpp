@@ -82,7 +82,7 @@ void Programa_sensorPresion::run(){
             }
         }
         else {
-            if (sector == -1 && last_sector == 0){
+            if (sector == -1 && (last_sector == 0 || last_sector == 2)){
                 t_ciclo = now - t_inicio_resp;
                 t_inicio_resp = now;
                 if (t_ciclo < 1000){
