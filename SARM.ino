@@ -52,7 +52,7 @@ void loop(){
     // Lee valores del sensor a 10Hz
     prog_pSensor.getMuestra();
     prog_leva.updateSensors();
-    int pot = analogRead(pinPotenciometro);
+    int pot = analogRead(pinPotenciometro)/4;
 
     // Program State
     if (program_state == calibration){
@@ -100,6 +100,8 @@ void loop(){
         Serial.print(program_state);
         Serial.print(",");
         prog_leva.printCSV();
+        Serial.print(",");
+        Serial.println(pot);
     }
 
     //LCD update
@@ -116,7 +118,7 @@ void loop(){
             lcd.setCursor(10,0);
             lcd.print(prog_pSensor.presion);
             lcd.setCursor(10,1);
-            lcd.print(pot/4);
+            lcd.print(pot);
         }
         else if (program_state == calibration){
             lcd.clear();
