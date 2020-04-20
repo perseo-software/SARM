@@ -38,7 +38,7 @@ void setup(){
     lcd.setCursor(0,1); 
     lcd.print("-booting-");
 
-    Serial.begin(115200);
+    Serial.begin(9600);
     error_pSensor = prog_pSensor.begin_();
     prog_leva.setup();
 
@@ -88,21 +88,21 @@ void loop(){
     prog_leva.run();
 
     //Envio informacion por Serial
-    now = millis();
-    if (now - last_t_serial >= refresh_rate_serial){
-        last_t_serial = now;
-
-        Serial.print("#");
-        Serial.print(millis()/1000.0,2);
-        Serial.print(",");
-        prog_pSensor.printCSV();
-        Serial.print(",");
-        Serial.print(program_state);
-        Serial.print(",");
-        prog_leva.printCSV();
-        Serial.print(",");
-        Serial.println(pot);
-    }
+    //now = millis();
+    //if (now - last_t_serial >= refresh_rate_serial){
+    //    last_t_serial = now;
+//
+    //    Serial.print("#");
+    //    Serial.print(millis()/1000.0,2);
+    //    Serial.print(",");
+    //    prog_pSensor.printCSV();
+    //    Serial.print(",");
+    //    Serial.print(program_state);
+    //    Serial.print(",");
+    //    prog_leva.printCSV();
+    //    Serial.print(",");
+    //    Serial.println(pot);
+    //}
 
     //LCD update
     now = millis();
@@ -135,5 +135,10 @@ void loop(){
             lcd.print("-colocacion motor-");
         }
     }
-    
+
+    Serial.print("pot1.val=");
+    Serial.print(pot);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);    
 }
