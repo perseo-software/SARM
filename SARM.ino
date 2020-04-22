@@ -140,5 +140,12 @@ void loop(){
     Serial.print(pot);
     Serial.write(0xFF);
     Serial.write(0xFF);
-    Serial.write(0xFF);    
+    Serial.write(0xFF);
+
+    //Waveform
+    Serial.print("add 4,0,");
+    Serial.print(pot);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
 }
