@@ -142,8 +142,29 @@ void loop(){
     Serial.write(0xFF);
     Serial.write(0xFF);
 
+    Serial.print("presion.txt=\"");
+    Serial.print(prog_pSensor.presion,4);
+    Serial.print("\"");
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+
+    Serial.print("caudal.txt=\"");
+    Serial.print(50);
+    Serial.print("\"");
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+
     //Waveform
-    Serial.print("add 4,0,");
+    Serial.print("add 2,0,");
+    Serial.print((int)(prog_pSensor.relative_pressure*20.0+40.0));
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+
+    //Waveform
+    Serial.print("add 5,0,");
     Serial.print(pot);
     Serial.write(0xFF);
     Serial.write(0xFF);
