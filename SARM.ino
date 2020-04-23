@@ -157,8 +157,9 @@ void loop(){
     Serial.write(0xFF);
 
     //Waveform
+    int wf_presion = prog_pSensor.relative_pressure * 20.0 + 40.0;
     Serial.print("add 2,0,");
-    Serial.print((int)(prog_pSensor.relative_pressure*20.0+40.0));
+    Serial.print(wf_presion);
     Serial.write(0xFF);
     Serial.write(0xFF);
     Serial.write(0xFF);
