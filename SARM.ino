@@ -151,7 +151,7 @@ void loop(){
     Serial.write(0xFF);
 
     Serial.print("caudal.txt=\"");
-    Serial.print(50);
+    Serial.print(flowRate,3);
     Serial.print("\"");
     Serial.write(0xFF);
     Serial.write(0xFF);
@@ -166,8 +166,9 @@ void loop(){
     Serial.write(0xFF);
 
     //Waveform
+    int wf_caudal = flowRate * 255 / 40;
     Serial.print("add 5,0,");
-    Serial.print(pot);
+    Serial.print(wf_caudal);
     Serial.write(0xFF);
     Serial.write(0xFF);
     Serial.write(0xFF);
