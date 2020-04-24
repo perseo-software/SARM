@@ -64,5 +64,5 @@ void Programa_leva::printCSV(){
     Serial.print(",");
     Serial.print(pizzometro1_state);
     Serial.print(",");
-    Serial.println(pizzometro2_state);
+    Serial.print(pizzometro2_state);
 }

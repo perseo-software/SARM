@@ -39,7 +39,7 @@ void setup(){
     lcd.setCursor(0,1); 
     lcd.print("-booting-");
 
-    Serial.begin(115200);
+    Serial.begin(9600);
     error_pSensor = prog_pSensor.begin_();
     prog_leva.setup();
 
@@ -51,7 +51,7 @@ void loop(){
     now = millis();
     prog_pSensor.getMuestra();
     prog_leva.updateSensors();
-    int pot = analogRead(pinPotenciometro);
+    int pot = analogRead(pinPotenciometro)/4;
     float flowRate = getFlowRate();
     flowRate *= 21; //Constante del conducto
 
@@ -89,19 +89,21 @@ void loop(){
     prog_leva.run();
 
     //Envio informacion por Serial
-    now = millis();
-    if (now - last_t_serial >= refresh_rate_serial){
-        last_t_serial = now;
-
-        Serial.print("#");
-        Serial.print(millis()/1000.0,2);
-        Serial.print(",");
-        prog_pSensor.printCSV();
-        Serial.print(",");
-        Serial.print(program_state);
-        Serial.print(",");
-        prog_leva.printCSV();
-    }
+    //now = millis();
+    //if (now - last_t_serial >= refresh_rate_serial){
+    //    last_t_serial = now;
+//
+    //    Serial.print("#");
+    //    Serial.print(millis()/1000.0,2);
+    //    Serial.print(",");
+    //    prog_pSensor.printCSV();
+    //    Serial.print(",");
+    //    Serial.print(program_state);
+    //    Serial.print(",");
+    //    prog_leva.printCSV();
+    //    Serial.print(",");
+    //    Serial.println(pot);
+    //}
 
     //LCD update
     now = millis();
@@ -117,7 +119,7 @@ void loop(){
             lcd.setCursor(10,0);
             lcd.print(prog_pSensor.presion);
             lcd.setCursor(10,1);
-            lcd.print(pot/4);
+            lcd.print(pot);
         }
         else if (program_state == calibration){
             lcd.clear();
@@ -134,5 +136,39 @@ void loop(){
             lcd.print("-colocacion motor-");
         }
     }
-    
+
+    Serial.print("pot1.val=");
+    Serial.print(pot);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+
+    Serial.print("presion.txt=\"");
+    Serial.print(prog_pSensor.presion,4);
+    Serial.print("\"");
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+
+    Serial.print("caudal.txt=\"");
+    Serial.print(50);
+    Serial.print("\"");
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+
+    //Waveform
+    int wf_presion = prog_pSensor.relative_pressure * 20.0 + 40.0;
+    Serial.print("add 2,0,");
+    Serial.print(wf_presion);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+
+    //Waveform
+    Serial.print("add 5,0,");
+    Serial.print(pot);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
+    Serial.write(0xFF);
 }
