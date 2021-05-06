@@ -11,7 +11,6 @@ class Programa_sensorPresion{
     bool new_pressure = false;
     float mean_pressure = 0;
     int nMuestras = 0;
-    float relative_pressure;
     float last_pressure;
     float last_relat_pressure = 0;
     float d_pressure;
@@ -26,7 +25,8 @@ class Programa_sensorPresion{
 public:
     float presion; // Almacena la presion atmosferica (kPa)
     float temperatura; // Almacena la temperatura (oC)
-    
+    float relative_pressure;
+
     unsigned long t_start_calib;
     int sector = 0;
     int nRespiraciones = 0;
